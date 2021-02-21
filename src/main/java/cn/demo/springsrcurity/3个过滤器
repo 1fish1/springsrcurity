@@ -1,0 +1,13 @@
+
+1：
+FilterSecurityInterceptor：是一个方法级的权限过滤器, 基本位于过滤链的最底部
+super.beforeInvocation(fi) 表示查看之前的 filter 是否通过。
+fi.getChain().doFilter(fi.getRequest(), fi.getResponse());表示真正的调用后台的服务
+2：
+ExceptionTranslationFilter：是个异常过滤器，用来处理在认证授权过程中抛出的异常
+3：
+UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校验表单中用户
+名，密码。
+
+
+过滤器是如何加载的。
