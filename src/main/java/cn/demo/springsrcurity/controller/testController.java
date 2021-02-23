@@ -42,7 +42,7 @@ public class testController {
 
     @RequestMapping("/preAuthorize")
     //@PreAuthorize("hasRole('ROLE_管理员')")
-    @PreAuthorize("hasAnyAuthority('admins')")
+    @PreAuthorize("hasAnyAuthority('admins1')")
 //    @PostAuthorize("hasAnyAuthority('admins')")
     public String preAuthorize() {
         System.out.println("PostAuthorize");

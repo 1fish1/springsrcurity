@@ -23,12 +23,23 @@ public class securityConfigTest extends WebSecurityConfigurerAdapter {
 
     // 配置自己的登陆页面和。。。
     protected void configure(HttpSecurity http) throws Exception {
+        // 退出登陆按钮 这个地方有个需要注意的地方，退出登陆后如果访问其他页面还是可以访问的话，
+        // 说明页面的缓存没有清除。清掉缓存就会返回登陆页面
+        http.logout().logoutUrl("/logout").logoutSuccessUrl("/test/preAuthorize").permitAll();
 
         http.exceptionHandling().accessDeniedPage("/unAuth.html");
+
         http.formLogin() //自定义自己登陆的页面
+                /**
+                 * .loginPage("/login.html") //登陆页面设置
+                 * .loginProcessingUrl("/user/login") //登陆访问路径
+                 * 这两个配置路径要相同， 要不然会出现登陆数据正确但是报错404
+                 */
                 .loginPage("/login.html") //登陆页面设置
                 .loginProcessingUrl("/user/login") //登陆访问路径
-                .defaultSuccessUrl("/test/index").permitAll()//登陆成功后跳转路径
+//                .defaultSuccessUrl("/test/index").permitAll()//登陆成功后跳转路径
+//                 退出按钮
+                .defaultSuccessUrl("/success.html").permitAll()
                 .and().authorizeRequests()
                 .antMatchers("/", "/test/hello", "/user/login").permitAll() //设置哪些页面可以直接访问 不需要认证
                 /**
