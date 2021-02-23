@@ -1,0 +1,21 @@
+  @Secured("ROLE_admins")
+  只要具有这个角色才会有访问这个页面
+  securityConfigTest -》
+  .antMatchers("/test/update").hasAuthority("admins")
+
+ MyUserService-》       // 获取有admins 权限的用户 指定权限
+          List<GrantedAuthority> auths =
+                  AuthorityUtils.commaSeparatedStringToAuthorityList("admins,ROLE_sale");
+
+
+                  @PreAuthorize
+                  @PreAuthorize：注解适合进入方法前的权限验证， @PreAuthorize 可以将登录用
+                  户的 roles/permissions 参数传到方法中。
+
+                   @PostAuthorize
+                   @PostAuthorize 注解使用并不多，在方法执行后再进行权限验证，适合验证带有返回值
+                                  的权限.
+
+                    @PostFilter
+                    @PostFilter ：权限验证之后对数据进行过滤 留下用户名是 admin1 的数据
+                    表达式中的 filterObject 引用的是方法返回值 List 中的某一个元素
