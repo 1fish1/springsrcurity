@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class securityConfigTest extends WebSecurityConfigurerAdapter {
@@ -16,6 +20,22 @@ public class securityConfigTest extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+
+    @Autowired
+    private DataSource dataSource;
+    @Autowired
+    private PersistentTokenRepository tokenRepository;
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository(){
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new
+                JdbcTokenRepositoryImpl();
+// 赋值数据源
+        jdbcTokenRepository.setDataSource(dataSource);
+// 自动创建表,第一次执行会创建，以后要执行就要删除掉！
+      //  jdbcTokenRepository.setCreateTableOnStartup(true);
+        return jdbcTokenRepository;
+    }
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEnco());
@@ -71,7 +91,15 @@ public class securityConfigTest extends WebSecurityConfigurerAdapter {
                 //.antMatchers("/test/hello").hasRole("sale")
                 // .antMatchers("/test/hello").hasAnyRole("sale","any")
                 .anyRequest().authenticated()
+                // 开启记住我功能
+                .and().rememberMe()
+                .tokenValiditySeconds(600)
+                .tokenRepository(persistentTokenRepository())
+                .userDetailsService(userDetailsService)
                 .and().csrf().disable(); //关闭csrf
+
+
+
     }
 
     @Bean
